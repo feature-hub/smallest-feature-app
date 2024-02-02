@@ -1,8 +1,27 @@
+import TerserPlugin from 'terser-webpack-plugin';
+import webpack from 'webpack';
+
+/**
+ * @type {import('webpack').Configuration}
+ */
+const baseConfig = {
+  entry: './src/index.tsx',
+  plugins: [
+    new webpack.BannerPlugin({
+      banner: 'Source: https://github.com/feature-hub/smallest-feature-app',
+    }),
+  ],
+  externals: ['react'],
+  optimization: {
+    minimizer: [new TerserPlugin({extractComments: false}), '...'],
+  },
+};
+
 /**
  * @type {import('webpack').Configuration}
  */
 const browserConfig = {
-  entry: './src/index.tsx',
+  ...baseConfig,
   output: {
     filename: 'index.umd.js',
     libraryTarget: 'umd',
@@ -20,14 +39,13 @@ const browserConfig = {
       },
     ],
   },
-  externals: ['react'],
 };
 
 /**
  * @type {import('webpack').Configuration}
  */
 const serverConfig = {
-  entry: './src/index.tsx',
+  ...baseConfig,
   output: {
     filename: 'index.node.js',
     libraryTarget: 'commonjs2',
@@ -46,7 +64,6 @@ const serverConfig = {
       },
     ],
   },
-  externals: ['react'],
 };
 
 export default [browserConfig, serverConfig];
